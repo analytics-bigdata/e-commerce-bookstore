@@ -43,7 +43,6 @@ def root():
     itemData = parse(itemData)
     return render_template('home.html', itemData=itemData, loggedIn=loggedIn, firstName=firstName, noOfItems=noOfItems, categoryData=categoryData)
 
-
 @app.route("/add")
 def admin():
     with sqlite3.connect('database.db') as conn:
@@ -404,4 +403,4 @@ def parse(data):
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True,host='0.0.0.0', port=5001)
