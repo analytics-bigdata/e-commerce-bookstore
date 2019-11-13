@@ -3,6 +3,8 @@ import sqlite3
 import hashlib
 import os
 from werkzeug.utils import secure_filename
+from random import randrange
+
 
 app = Flask(__name__)
 app.secret_key = 'random string'
@@ -212,7 +214,8 @@ def loginForm():
     if 'email' in session:
         return redirect(url_for('root'))
     else:
-        return render_template('login.html', error='')
+        randomNumber = randrange(10000, 1000000);
+        return render_template('login.html', error='', randomNumber=randomNumber)
 
 
 @app.route("/login", methods=['POST', 'GET'])
@@ -227,6 +230,17 @@ def login():
             error = 'Invalid UserId / Password'
             return render_template('login.html', error=error)
 
+@app.route("/social-login", methods=['POST', 'GET'])
+def social_login():
+    if request.method == 'POST':
+        email = request.form['email']
+        token = request.form['token']
+        if is_valid_social_login(email, token):
+            session['email'] = email
+            return jsonify({'status':'success'})
+        else:
+            msg = 'Not found linked account'
+            return jsonify({'status':'info','msg':msg})
 
 @app.route("/productDescription")
 def productDescription():
@@ -320,6 +334,16 @@ def is_valid(email, password):
             return True
     return False
 
+def is_valid_social_login(email, token):
+    con = sqlite3.connect('database.db')
+    cur = con.cursor()
+    cur.execute('SELECT email FROM users')
+    data = cur.fetchall()
+    for row in data:
+        if row[0] == email:
+            # TODO validate social login token here 
+            return True
+    return False
 
 @app.route("/checkout", methods=['GET', 'POST'])
 def payment():

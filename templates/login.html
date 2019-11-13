@@ -2,6 +2,8 @@
 
 <head>
   <title> First flask app </title>
+  <script src="https://code.jquery.com/jquery-3.4.1.min.js"
+    integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
 </head>
 
 <body>
@@ -22,27 +24,23 @@
         var userId = response.authResponse.userID;
         getUserInfo(userId);
       } else {                                 // Not logged into your webpage or we are unable to tell.
-        document.getElementById('status').innerHTML = 'Please log ' +
-          'into this webpage.';
+        document.getElementById('status').innerHTML = 'Please log into this webpage.';
       }
     }
 
-
-    function checkLoginState() {               // Called when a person is finished with the Login Button.
+    function checkLoginState() {                // Called when a person is finished with the Login Button.
       FB.getLoginStatus(function (response) {   // See the onlogin handler
         statusChangeCallback(response);
       });
     }
 
-
     window.fbAsyncInit = function () {
       FB.init({
         appId: '514311416047283',
-        cookie: true,                     // Enable cookies to allow the server to access the session.
-        xfbml: true,                     // Parse social plugins on this webpage.
-        version: 'v4.0'           // Use this Graph API version for this call.
+        cookie: true,         // Enable cookies to allow the server to access the session.
+        xfbml: true,          // Parse social plugins on this webpage.
+        version: 'v4.0'       // Use this Graph API version for this call.
       });
-
 
       FB.getLoginStatus(function (response) {   // Called after the JS SDK has been initialized.
         statusChangeCallback(response);        // Returns the login status.
@@ -67,35 +65,35 @@
         {},
         function (response) {
           // Insert your code here
-           console.log(response);
+          console.log(response);
           let email = response.email;
-          //loginViaEmail(email);
+          loginViaEmail(email);
         }
       );
     }
 
     function loginViaEmail(email) {
       // body...
-      let token = '';
+      let token = '{{randomNumber}}';
 
       let data = {
-        _token: token,
+        token: token,
         email: email
       }
 
       $.ajax({
-        url: '/login/via/email',
+        url: '/social-login',
         type: 'POST',
         dataType: 'json',
         data: data,
         success: function (data) {
           console.log(data);
           if (data.status == 'success') {
-            window.location.href = '/dashboard';
+            window.location.href = '/';
           }
 
           if (data.status == 'info') {
-            window.location.href = '/create-account';
+            window.location.href = '/registerationForm';
           }
         },
         error: function (data) {
@@ -110,8 +108,7 @@
 
   // The JS SDK Login Button
 
-  <fb:login-button onlogin="checkLoginState();" scope="public_profile,email">
-  </fb:login-button>
+  <button onclick="checkLoginState()">Login</button>
 
   <br />
   <div id="status">
